@@ -1,0 +1,6 @@
+{
+    "require": {
+        "gingerpayments/ginger-php": "^2.2",
+        "gingerpayments/ginger-plugin-sdk": "^1.4"
+    }
+}
