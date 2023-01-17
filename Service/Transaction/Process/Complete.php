@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace GingerPay\Payment\Service\Transaction\Process;
 
 use GingerPay\Payment\Service\Transaction\AbstractTransaction;
+use GingerPluginSdk\Entities\Order;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Payment;
@@ -32,7 +33,7 @@ class Complete extends AbstractTransaction
      * @return array
      * @throws LocalizedException
      */
-    public function execute(array $transaction, OrderInterface $order, string $type): array
+    public function execute(Order $transaction, OrderInterface $order, string $type): array
     {
         return $this->complete($transaction, $order, $type);
     }

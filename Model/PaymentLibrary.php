@@ -29,6 +29,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ErrorHandler;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -146,11 +147,6 @@ class PaymentLibrary extends AbstractMethod
      * @var UrlProvider
      */
     protected $urlProvider;
-
-    /**
-     * @var Client
-     */
-    protected $sdkClient;
 
     /**
      * PaymentLibrary constructor.
@@ -271,11 +267,10 @@ class PaymentLibrary extends AbstractMethod
 
 
     /**
-     * Extra checks for method availability
-     *
      * @param CartInterface|null $quote
      *
-     * @return bool
+     * @return bool|Exception
+     *
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
@@ -291,23 +286,21 @@ class PaymentLibrary extends AbstractMethod
             return false;
         }
 
+        $error = new ErrorHandler();
         $client = $this->loadGingerClient((int)$quote->getStoreId(), $testApiKey);
-
-        $currencyForCurrentPayment = $client->checkAvailabilityForPaymentMethodUsingCurrency($this->platform_code, new Currency('EUR'));
+        try{
+            if($this->platform_code == 'pay-now'){
+                return true;
+            }
+            else {
+                $currencyForCurrentPayment = $client->checkAvailabilityForPaymentMethodUsingCurrency($this->platform_code, new Currency($quote->getStoreCurrencyCode()));
+            }
+        } catch (\Exception $e){
+            return false;
+        }
 
         return $currencyForCurrentPayment;
 
-//        $currencyForCurrentPayment = $this->getAvailableCurrency();
-//
-//        if (!$currencyForCurrentPayment) {
-//            return false;
-//        }
-//
-//        if (!in_array($quote->getQuoteCurrencyCode(), $currencyForCurrentPayment)) {
-//            return false;
-//        }
-
-//        return parent::isAvailable($quote);
     }
 
     /**
@@ -381,7 +374,7 @@ class PaymentLibrary extends AbstractMethod
         $transaction = $client->getOrder($transactionId);
         $this->configRepository->addTolog('process', $transaction);
 
-        if (empty($transaction['id'])) {
+        if (empty($transaction->getId()->get())) {
             $msg = ['error' => true, 'msg' => __('Transaction not found')];
             $this->configRepository->addTolog('error', $msg);
             return $msg;
@@ -500,10 +493,9 @@ class PaymentLibrary extends AbstractMethod
                 break;
         }
 
-
         $paymentDetails = $this->orderDataCollector->getTransactions($platformCode, $issuer, $verifiedTermsOfService)->getPaymentMethod()->get();
 
-        $data = $this->orderData->collectData($order->getShippingAmount(), $paymentDetails, $custumerData,  $this->urlProvider);
+        $data = $this->orderData->collectData($order, $paymentDetails, $custumerData,  $this->urlProvider);
         $client = $this->loadGingerClient((int)$order->getStoreId(), $testApiKey);
 
         $transaction = $client->sendOrder($data);

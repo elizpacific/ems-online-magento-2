@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace GingerPay\Payment\Service\Transaction\Process;
 
+use GingerPluginSdk\Entities\Order;
 use Magento\Sales\Api\Data\OrderInterface;
 use GingerPay\Payment\Service\Transaction\AbstractTransaction;
 
@@ -28,7 +29,7 @@ class Error extends AbstractTransaction
      *
      * @return array
      */
-    public function execute(OrderInterface $order, string $type, $customerMessage = ''): array
+    public function execute(Order $order, string $type, $customerMessage = ''): array
     {
         return $this->error($order, $type, $customerMessage);
     }

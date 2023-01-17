@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace GingerPay\Payment\Service\Transaction\Process;
 
+use GingerPluginSdk\Entities\Order;
 use Magento\Sales\Api\Data\OrderInterface;
 use GingerPay\Payment\Service\Transaction\AbstractTransaction;
 
@@ -24,7 +25,7 @@ class Unknown extends AbstractTransaction
      *
      * @return array
      */
-    public function execute(OrderInterface $order, string $type, string $status): array
+    public function execute(Order $order, string $type, string $status): array
     {
         return $this->unknown($order, $type, $status);
     }

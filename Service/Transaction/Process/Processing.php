@@ -9,6 +9,7 @@ namespace GingerPay\Payment\Service\Transaction\Process;
 
 use GingerPay\Payment\Model\Methods\Banktransfer;
 use GingerPay\Payment\Service\Transaction\AbstractTransaction;
+use GingerPluginSdk\Entities\Order;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
@@ -33,7 +34,7 @@ class Processing extends AbstractTransaction
      * @return array
      * @throws LocalizedException
      */
-    public function execute(array $transaction, OrderInterface $order, string $type): array
+    public function execute(Order $transaction, OrderInterface $order, string $type): array
     {
         return $this->processing($transaction, $order, $type);
     }

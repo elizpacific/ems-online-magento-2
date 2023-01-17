@@ -234,12 +234,42 @@ class ServiceOrderBuilder
      * @param $urlProvider
      * @return Order
      */
-    public function collectData($amount, $paymentDetails, $customerData, $urlProvider)
+    public function collectData($order, $paymentDetails, $customerData, $urlProvider)
     {
-        if($paymentDetails == 'pay-now'){
+//        if($paymentDetails == 'pay-now'){
+//            return new Order(
+//                currency: new Currency('EUR'),// new Currency($payment_amount->getCurrencyCode()),
+//                amount: new Amount($amount % 10),
+//                customer: new Customer(
+//                    additionalAddresses: new AdditionalAddresses(
+//                        new Address(
+//                            addressType: $customerData['address_type'],
+//                            postalCode: $customerData['postal_code'],
+//                            country: new Country($customerData['country'])
+//                        ),
+//                    ),
+//                    firstName: $customerData['first_name'],
+//                    lastName: $customerData['last_name'],
+//                    emailAddress: new EmailAddress($customerData['email_address']),
+//                    phoneNumbers: new PhoneNumbers(),
+//                    country: new Country($customerData['country']),
+//                    locale: new Locale($customerData['locale']),
+//                    merchantCustomerId: $customerData['merchant_customer_id']
+//                ),
+//                webhook_url: $urlProvider->getWebhookUrl(),
+//                return_url: $urlProvider->getReturnUrl()
+//            );
+//        } else {
+//        dd($order->getBaseGrandTotal());
             return new Order(
-                currency: new Currency('EUR'),// new Currency($payment_amount->getCurrencyCode()),
-                amount: new Amount($amount % 10),
+                currency: new Currency($order->getOrderCurrencyCode()),
+                amount: new Amount( (int)($order->getBaseGrandTotal())),
+                transactions: new Transactions(
+                    new Transaction(
+                        paymentMethodDetails: new PaymentMethodDetails(),
+                        paymentMethod: $paymentDetails
+                    )
+                ),
                 customer: new Customer(
                     additionalAddresses: new AdditionalAddresses(
                         new Address(
@@ -259,31 +289,7 @@ class ServiceOrderBuilder
                 webhook_url: $urlProvider->getWebhookUrl(),
                 return_url: $urlProvider->getReturnUrl()
             );
-        } else {
-            return new Order(
-                currency: new Currency('EUR'),// new Currency($payment_amount->getCurrencyCode()),
-                amount: new Amount( $amount % 10),
-                transactions: new Transactions(),
-                customer: new Customer(
-                    additionalAddresses: new AdditionalAddresses(
-                        new Address(
-                            addressType: $customerData['address_type'],
-                            postalCode: $customerData['postal_code'],
-                            country: new Country($customerData['country'])
-                        ),
-                    ),
-                    firstName: $customerData['first_name'],
-                    lastName: $customerData['last_name'],
-                    emailAddress: new EmailAddress($customerData['email_address']),
-                    phoneNumbers: new PhoneNumbers(),
-                    country: new Country($customerData['country']),
-                    locale: new Locale($customerData['locale']),
-                    merchantCustomerId: $customerData['merchant_customer_id']
-                ),
-                webhook_url: $urlProvider->getWebhookUrl(),
-                return_url: $urlProvider->getReturnUrl()
-            );
-        }
+//        }
     }
 
     /**

@@ -275,10 +275,11 @@ class TransactionBuilder
      * @return array
      * @throws LocalizedException
      */
-    public function processUpdate(array $transaction, OrderInterface $order, string $type): array
+    public function processUpdate(\GingerPluginSdk\Entities\Order $transaction, OrderInterface $order, string $type): array
     {
-        $status = !empty($transaction['status']) ? $transaction['status'] : '';
-        $customerMessage = !empty(current($transaction['transactions'])['customer_message']) ? current($transaction['transactions'])['customer_message'] : null;
+        $status = !empty($transaction->getStatus()->get()) ? $transaction->getStatus()->get() : '';
+
+        $customerMessage = !empty($transaction->getCurrentTransaction()->getCustomerMessage()) ? $transaction->getCurrentTransaction()->getCustomerMessage() : null;
 
         switch ($status) {
             case 'error':
@@ -337,7 +338,7 @@ class TransactionBuilder
      * @return array
      * @throws LocalizedException
      */
-    public function complete(array $transaction, OrderInterface $order, string $type): array
+    public function complete(\GingerPluginSdk\Entities\Order $transaction, OrderInterface $order, string $type): array
     {
         /** @var Payment $payment */
         $payment = $order->getPayment();

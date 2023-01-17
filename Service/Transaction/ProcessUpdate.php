@@ -16,6 +16,7 @@ use GingerPay\Payment\Service\Transaction\Process\Processing;
 use GingerPay\Payment\Service\Transaction\Process\Unknown;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
+use GingerPluginSdk\Entities\Order;
 
 /**
  * Process Update service class
@@ -56,7 +57,7 @@ class ProcessUpdate extends TransactionRedefiner
      * @return array
      * @throws LocalizedException
      */
-    public function execute(array $transaction, OrderInterface $order, string $type): array
+    public function execute(Order $transaction, OrderInterface $order, string $type): array
     {
         return $this->processUpdate($transaction, $order, $type);
     }

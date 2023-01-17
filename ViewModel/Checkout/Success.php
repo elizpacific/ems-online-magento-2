@@ -110,7 +110,7 @@ You will receive the order email once the payment is successful.";
             return '';
         }
 
-        $paymentStatus = $transaction['status'] ?? null;
+        $paymentStatus = $transaction->getStatus()->get() ?? null;
         if (($paymentStatus == 'processing') && ($paymentMethod == Ideal::METHOD_CODE)) {
             $message = self::IDEAL_PROCESSING_MESSAGE;
             return __($message)->render();
